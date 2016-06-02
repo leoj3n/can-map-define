@@ -1232,3 +1232,32 @@ test("double get in a compute (#2230)", function() {
 	c.bind("change", function() {});
 
 });
+
+test("Wildcard serialize doesn't apply to getter properties (#4)", function() {
+	var VM = CanMap.extend({
+		define: {
+			explicitlySerialized: {
+				get: function () {
+					return true;
+				},
+				serialize: true
+			},
+			implicitlySerialized: {
+				get: function () {
+					return true;
+				}
+			},
+			'*': {
+				serialize: true
+			}
+		}
+	});
+
+	var vm = new VM();
+	vm.bind('change', function() {});
+
+	deepEqual(vm.serialize(), {
+		explicitlySerialized: true,
+		implicitlySerialized: true
+	});
+});
